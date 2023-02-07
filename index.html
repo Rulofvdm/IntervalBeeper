@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Timer</title>
+    <style>
+      body {
+        background-color: #333;
+        color: #fff;
+        font-family: Arial, sans-serif;
+      }
+      
+      input[type="number"] {
+        padding: 10px;
+        background-color: #444;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        font-size: 16px;
+        width: 200px;
+        text-align: center;
+      }
+      
+      button {
+        padding: 10px 20px;
+        background-color: #444;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        font-size: 16px;
+        margin: 10px;
+      }
+      
+      #timer {
+        font-size: 36px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <center>
+      <input type="number" id="intervalSeconds" value="60" />
+      <br><br>
+      <button id="startTimer">Start Timer</button>
+      <button id="resetTimer">Reset Timer</button>
+      <br><br>
+      <p id="timer"></p>
+    </center>
+    <script>
+      const intervalInput = document.getElementById("intervalSeconds");
+      const startButton = document.getElementById("startTimer");
+      const resetButton = document.getElementById("resetTimer");
+      const timerDisplay = document.getElementById("timer");
+
+      let interval = parseInt(intervalInput.value);
+      let timer;
+
+      function startCountdown() {
+        interval = parseInt(intervalInput.value);
+        timerDisplay.innerHTML = interval;
+        timer = setInterval(function() {
+          interval--;
+          timerDisplay.innerHTML = interval;
+          if (interval === 0) {
+            clearInterval(timer);
+            startCountdown();
+            playBeep();
+          }
+        }, 1000);
+      }
+
+    function playBeep() {
+        const context = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = context.createOscillator();
+        const gainNode = context.createGain();
+
+        oscillator.connect( gainNode );
+        gainNode.connect( context.destination );
+        oscillator.frequency.value = 440;
+        oscillator.start(0);
+        gainNode.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 0.5);
+    }
+
+      startButton.addEventListener("click", startCountdown);
+
+      resetButton.addEventListener("click", function() {
+        clearInterval(timer);
+        interval = parseInt(intervalInput.value);
+        timerDisplay.innerHTML = interval;
+      });
+    </script>
+  </body>
+</html>

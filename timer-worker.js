@@ -1,14 +1,16 @@
-let interval = parseInt(document.getElementById("intervalSeconds").value);
+let interval;
 
-function startWorker() {
+self.onmessage = function(event) {
+  const { data: { interval } } = event;
+  startWorker({ interval });
+};
+
+function startWorker({ interval }) {
   interval--;
   if (interval === 0) {
-    interval = parseInt(document.getElementById("intervalSeconds").value);
-    postMessage(interval);
+    self.postMessage({ interval, done: true });
   } else {
-    postMessage(interval);
+    self.postMessage({ interval });
+    setTimeout(() => startWorker({ interval }), 1000);
   }
-  setTimeout(startWorker, 1000);
 }
-
-startWorker();
